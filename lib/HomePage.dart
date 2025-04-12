@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
+
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0; // Track the selected index
+  int _selectedIndex = 0;
 
-  // List of pages for each tab
   final List<Widget> _pages = [
-    HomeTab(),
+    HomeTab(), // Updated tab with image & button
     HistoryTab(),
-    ProfileTab(),
     ActivityTab(),
+    ProfileTab(),
   ];
 
   void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index; // Update the selected index
+      _selectedIndex = index;
     });
   }
 
@@ -25,101 +25,180 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Expense Splitter'),
-        backgroundColor: const Color.fromARGB(255, 33, 158, 89),
+        backgroundColor: const Color.fromARGB(255, 10, 10, 10),
       ),
-      body: _pages[_selectedIndex], // Display the page corresponding to the selected tab
+      body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
+        backgroundColor: Colors.black,
+        type: BottomNavigationBarType.fixed,
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        selectedItemColor: Color(0xFF1C8D5E), // green shade
+        unselectedItemColor: Colors.white70,
+        selectedLabelStyle: TextStyle(fontWeight: FontWeight.w500),
+        unselectedLabelStyle: TextStyle(fontWeight: FontWeight.w400),
+        iconSize: 26,
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.list_alt),
+            icon: Icon(Icons.view_list_rounded),
             label: 'List',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
+            icon: Icon(Icons.person_add_alt),
             label: 'Friends',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.local_activity),
+            icon: Icon(
+              Icons.bar_chart_rounded,
+            ), // can be Icons.insert_chart_alt_rounded
             label: 'Activity',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person_2_rounded),
-            label: 'Profile',
+            icon: Icon(
+              Icons.account_circle_outlined,
+            ), // or use Image.asset if custom
+            label: 'Account',
           ),
         ],
-        currentIndex: _selectedIndex, // Current selected tab
-        selectedItemColor: const Color.fromARGB(255, 28, 141, 94), // Color when selected (green)
-        unselectedItemColor: Colors.grey, // Color when not selected
-        onTap: _onItemTapped, // Call the function when a tab is tapped
-        selectedFontSize: 14, // Font size for selected label
-        unselectedFontSize: 12, // Font size for unselected label
-        iconSize: 30, // Icon size (larger icons)
       ),
     );
   }
 }
 
-// Sample tab for Home
+// ✅ Replaced HomeTab with your required design
 class HomeTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.home, size: 100, color: const Color.fromARGB(255, 37, 131, 95)),
-          Text('Home Page', style: TextStyle(fontSize: 24)),
-        ],
+    return Container(
+      color: Colors.black, // ✅ Set background color here
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(16, 8, 16, 20), // less top padding
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // ✅ Top Row: Lists + Add Button
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Lists',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Color(0xFF1C8D5E),
+                    shape: BoxShape.circle,
+                  ),
+                  child: IconButton(
+                    icon: Icon(Icons.add, color: Colors.white),
+                    onPressed: () {
+                      // TODO: Handle add list
+                    },
+                  ),
+                ),
+              ],
+            ),
+
+            Expanded(
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Center image inside a card
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black45,
+                            blurRadius: 6,
+                            offset: Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.asset(
+                          'assets/blog 1.png', // replace this with your asset
+                          width: 250,
+                          height: 120,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 30),
+                    const Text(
+                      'You are all set to go',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 30,
+                        vertical: 10,
+                      ),
+                      child: Text(
+                        'Start by creating your first list. Or follow the link in your received invitation, to join an existing list.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.white70),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () {
+                        // Action when button is clicked
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 30,
+                          vertical: 12,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text('Add your first list'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
-// Sample tab for History
+// Other Tabs
 class HistoryTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.history, size: 100, color: const Color.fromARGB(255, 37, 131, 95)),
-          Text('History Page', style: TextStyle(fontSize: 24)),
-        ],
-      ),
-    );
+    return Center(child: Text('History Page', style: TextStyle(fontSize: 24)));
   }
 }
 
-// Sample tab for Profile
-class ProfileTab extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.person, size: 100,  color: const Color.fromARGB(255, 37, 131, 95)),
-          Text('Profile Page', style: TextStyle(fontSize: 24)),
-        ],
-      ),
-    );
-  }
-}
-
-// Sample tab for Activity
 class ActivityTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.local_activity, size: 100,  color: const Color.fromARGB(255, 37, 131, 95)),
-          Text('Activity Page', style: TextStyle(fontSize: 24)),
-        ],
-      ),
-    );
+    return Center(child: Text('Activity Page', style: TextStyle(fontSize: 24)));
+  }
+}
+
+class ProfileTab extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(child: Text('Profile Page', style: TextStyle(fontSize: 24)));
   }
 }
