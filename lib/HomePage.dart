@@ -1,3 +1,4 @@
+import 'package:expense_splitter/ListPage.Dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -24,9 +25,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 10, 10, 10),
-      ),
+      appBar: AppBar(backgroundColor: const Color.fromARGB(255, 10, 10, 10)),
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.black,
@@ -96,7 +95,12 @@ class HomeTab extends StatelessWidget {
                   child: IconButton(
                     icon: Icon(Icons.add, color: Colors.white),
                     onPressed: () {
-                      // TODO: Handle add list
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CreateListPage(),
+                        ),
+                      );
                     },
                   ),
                 ),
@@ -155,8 +159,13 @@ class HomeTab extends StatelessWidget {
                     const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: () {
-                        // Action when button is clicked
-                      },
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CreateListPage(),
+                        ),
+                      );
+                    },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.blue,
                         foregroundColor: Colors.white,
