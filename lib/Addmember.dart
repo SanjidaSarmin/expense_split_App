@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart'; 
+import 'package:flutter/material.dart';
 
 class AddMembersPage extends StatefulWidget {
   const AddMembersPage({super.key});
@@ -18,7 +18,12 @@ class _AddMembersPageState extends State<AddMembersPage> {
         _members.add(name);
         _controller.clear();
       });
+      FocusScope.of(context).unfocus();
     }
+  }
+
+  void _confirmMembers() {
+    Navigator.pop(context, _members); // return list of members to previous page
   }
 
   @override
@@ -30,16 +35,21 @@ class _AddMembersPageState extends State<AddMembersPage> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {},
+          onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
           'Add members',
           style: TextStyle(color: Colors.white),
         ),
+        actions: [
+          TextButton(
+            onPressed: _confirmMembers,
+            child: const Text('Confirm', style: TextStyle(color: Colors.white)),
+          )
+        ],
       ),
       body: Column(
         children: [
-          // Text input
           Padding(
             padding: const EdgeInsets.all(16),
             child: TextField(
@@ -57,8 +67,6 @@ class _AddMembersPageState extends State<AddMembersPage> {
               ),
             ),
           ),
-
-          // Display list of added members
           Expanded(
             child: _members.isEmpty
                 ? const Center(
@@ -70,41 +78,47 @@ class _AddMembersPageState extends State<AddMembersPage> {
                 : ListView.builder(
                     itemCount: _members.length,
                     itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text(
-                          _members[index],
-                          style: const TextStyle(color: Colors.white),
+                      return Dismissible(
+                        key: Key(_members[index]),
+                        background: Container(
+                          color: Colors.red,
+                          alignment: Alignment.centerLeft,
+                          padding: const EdgeInsets.only(left: 20),
+                          child: const Icon(Icons.delete, color: Colors.white),
+                        ),
+                        onDismissed: (direction) {
+                          setState(() {
+                            _members.removeAt(index);
+                          });
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Member removed')),
+                          );
+                        },
+                        child: ListTile(
+                          title: Text(
+                            _members[index],
+                            style: const TextStyle(color: Colors.white),
+                          ),
                         ),
                       );
                     },
                   ),
           ),
-
-          // Add button
           Padding(
             padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                ElevatedButton(
-                  onPressed: _addMember,
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size.fromHeight(50),
-                    backgroundColor: const Color(0xFF1E3A8A),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: const Text(
-                    'Add members',
-                    style: TextStyle(color: Colors.white),
-                  ),
+            child: ElevatedButton(
+              onPressed: _addMember,
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size.fromHeight(50),
+                backgroundColor: const Color(0xFF1E3A8A),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                const SizedBox(height: 8),
-                const Text(
-                  'Splitser contacts will join the list directly',
-                  style: TextStyle(color: Colors.grey, fontSize: 12),
-                )
-              ],
+              ),
+              child: const Text(
+                'Add member',
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           )
         ],

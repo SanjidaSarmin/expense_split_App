@@ -25,6 +25,7 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   @override
+
   void initState() {
     super.initState();
     // Delay for 3 seconds before navigating to the home screen

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:expense_splitter/Member.dart';
+import 'package:expense_splitter/Group.dart';
 
 class CreateListPage extends StatefulWidget {
   @override
@@ -24,44 +24,43 @@ class _CreateListPageState extends State<CreateListPage> {
           child: Text('Cancel', style: TextStyle(color: Colors.white)),
         ),
       ),
-      body: Padding(
+     body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          children: [
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade900,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                "Create list",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            SizedBox(height: 24),
 
-            children: [
-      Container(
-        padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-        decoration: BoxDecoration(
-          color: Colors.grey.shade900,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Text(
-          "Create list",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-      SizedBox(height: 24),
+            // Continue with list name field, currency, etc.
+            TextField(
+              controller: _listNameController,
+              style: TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                hintText: 'List name',
+                hintStyle: TextStyle(color: Colors.grey),
+                filled: true,
+                fillColor: Colors.grey.shade900,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+            SizedBox(height: 16),
 
-    // Continue with list name field, currency, etc.
-    TextField(
-      controller: _listNameController,
-      style: TextStyle(color: Colors.white),
-      decoration: InputDecoration(
-        hintText: 'List name',
-        hintStyle: TextStyle(color: Colors.grey),
-        filled: true,
-        fillColor: Colors.grey.shade900,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-      ),
-    ),
-    SizedBox(height: 16),
-            
             DropdownButtonFormField<String>(
               value: _selectedCurrency,
               dropdownColor: Colors.grey.shade900,
@@ -98,7 +97,7 @@ class _CreateListPageState extends State<CreateListPage> {
               ),
             ),
             Spacer(),
-        ElevatedButton(
+            ElevatedButton(
   onPressed: () {
     if (_listNameController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -108,10 +107,13 @@ class _CreateListPageState extends State<CreateListPage> {
         ),
       );
     } else {
+      // Pass the group name to CreateListMembersPage
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => CreateListMembersPage(),
+          builder: (context) => CreateListMembersPage(
+            groupName: _listNameController.text.trim(),
+          ),
         ),
       );
     }
