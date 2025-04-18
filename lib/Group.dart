@@ -1,22 +1,30 @@
 import 'package:expense_splitter/Addmember.dart';
+import 'package:expense_splitter/HomePage.dart';
 import 'package:flutter/material.dart';
 import 'package:expense_splitter/service/GroupService.dart'; // Import your service for creating a group
 
 class CreateListMembersPage extends StatefulWidget {
-  final String groupName;
-  const CreateListMembersPage({Key? key, required this.groupName})
-    : super(key: key);
+ final String groupName;
+  final String currency;
+
+  const CreateListMembersPage({
+    Key? key,
+    required this.groupName,
+    required this.currency,
+  }) : super(key: key);
 
   @override
   State<CreateListMembersPage> createState() => _CreateListMembersPageState();
 }
 
 class _CreateListMembersPageState extends State<CreateListMembersPage> {
-  List<String> newMembers = []; // List of members added
-  String groupName =
-      'Trip Group'; // You should pass this dynamically based on the group name
-  String currency = 'USD'; // Also should be passed from previous page
-  Future<void> _navigateAndAddMembers() async {
+
+   List<String> newMembers = [];
+
+   String get groupName => widget.groupName; 
+  String get currency => widget.currency; 
+
+ Future<void> _navigateAndAddMembers() async {
     final List<String>? result = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => AddMembersPage()),
@@ -32,28 +40,32 @@ class _CreateListMembersPageState extends State<CreateListMembersPage> {
 
   // Method to create group with members
  Future<void> _createGroup() async {
-  print("🟠 _createGroup() called");
-  try {
-    final response = await GroupService().createGroup(
-      groupName,
-      currency,
-      newMembers,
-    );
-    print("✅ Group created: $response");
-
-    if (response != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Group created successfully')),
+    print("🟠 _createGroup() called");
+    try {
+      final response = await GroupService().createGroup(
+        groupName,
+        currency,
+        newMembers,
       );
-      Navigator.pop(context);
+      print("✅ Group created: $response");
+
+      if (response != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Group created successfully')),
+        );
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+          (route) => false, // This removes all previous routes
+        );
+      }
+    } catch (e) {
+      print("❌ Error: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to create group: $e')),
+      );
     }
-  } catch (e) {
-    print("❌ Error: $e");
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Failed to create group: $e')),
-    );
   }
-}
 
   @override
   Widget build(BuildContext context) {

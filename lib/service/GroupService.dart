@@ -42,4 +42,78 @@ class GroupService {
       return null;
     }
   }
+
+ // Method to fetch all groups
+  Future<List<Map<String, dynamic>>> fetchGroups() async {
+    final url = Uri.parse('http://192.168.0.106:8082/api/groups');
+    try {
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+
+        return data.map<Map<String, dynamic>>((group) {
+          return {
+            'id': group['id'],
+            'name': group['name'],
+            'currency': group['currency'],
+            'members': group['members']?.length ?? 0,
+          };
+        }).toList();
+      } else {
+        print('❌ Failed to fetch groups: ${response.statusCode}');
+        return [];
+      }
+    } catch (e) {
+      print('❌ Error fetching groups: $e');
+      return [];
+    }
+  }
+
+Future<bool> deleteGroup(int groupId) async {
+    final url = Uri.parse('http://192.168.0.106:8082/api/groups/$groupId');
+
+    try {
+      final response = await http.delete(url);
+      if (response.statusCode == 200) {
+        print('✅ Group deleted successfully.');
+        return true;
+      } else {
+        print('❌ Failed to delete group: ${response.statusCode}');
+        print('Response: ${response.body}');
+        return false;
+      }
+    } catch (e) {
+      print('❌ Error deleting group: $e');
+      return false;
+    }
+  }
+ 
+
+Future<List<Map<String, dynamic>>> getAllMembers() async {
+  final url = Uri.parse('http://192.168.0.106:8082/api/members'); // adjust IP/port if needed
+
+  try {
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body);
+      return data.map<Map<String, dynamic>>((member) {
+        return {
+          'id': member['id'],
+          'name': member['name'],
+        };
+      }).toList();
+    } else {
+      print('❌ Failed to fetch members: ${response.statusCode}');
+      return [];
+    }
+  } catch (e) {
+    print('❌ Error fetching members: $e');
+    return [];
+  }
+}
+
+
+
+
 }

@@ -1,4 +1,7 @@
+import 'package:expense_splitter/Friend.dart';
 import 'package:expense_splitter/ListPage.Dart';
+import 'package:expense_splitter/Profile.dart';
+import 'package:expense_splitter/ViewList.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -9,17 +12,45 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
+  
+
   final List<Widget> _pages = [
     HomeTab(), // Updated tab with image & button
-    HistoryTab(),
-    ActivityTab(),
+    GroupTab(),
+    FriendTab(),
     ProfileTab(),
   ];
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    if (index == 0) {
+      // Navigate to profile screen
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()),
+      );
+    } else if (index == 1) {
+      // Navigate to profile screen
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Viewlist()),
+      );
+    } else if (index == 2) {
+      // Navigate to profile screen
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => FriendsPage()),
+      );
+    } else if (index == 3) {
+      // Navigate to profile screen
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ProfilePage()),
+      );
+    } else {
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
   }
 
   @override
@@ -39,18 +70,18 @@ class _HomePageState extends State<HomePage> {
         iconSize: 26,
         items: [
           BottomNavigationBarItem(
+            icon: Icon(
+              Icons.home_rounded,
+            ), // can be Icons.insert_chart_alt_rounded
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.view_list_rounded),
             label: 'List',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person_add_alt),
             label: 'Friends',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.bar_chart_rounded,
-            ), // can be Icons.insert_chart_alt_rounded
-            label: 'Activity',
           ),
           BottomNavigationBarItem(
             icon: Icon(
@@ -159,13 +190,14 @@ class HomeTab extends StatelessWidget {
                     const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => CreateListPage(),
-                        ),
-                      );
-                    },
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (context) => CreateListPage(),
+                          ),
+                        );
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.blue,
                         foregroundColor: Colors.white,
@@ -191,23 +223,23 @@ class HomeTab extends StatelessWidget {
 }
 
 // Other Tabs
-class HistoryTab extends StatelessWidget {
+class GroupTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text('History Page', style: TextStyle(fontSize: 24)));
+    return Center(child: Text(' Page', style: TextStyle(fontSize: 24)));
   }
 }
 
-class ActivityTab extends StatelessWidget {
+class FriendTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text('Activity Page', style: TextStyle(fontSize: 24)));
+    return Center(child: Text(' Page', style: TextStyle(fontSize: 24)));
   }
 }
 
 class ProfileTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text('Profile Page', style: TextStyle(fontSize: 24)));
+    return Center(child: Text(' Page', style: TextStyle(fontSize: 24)));
   }
 }

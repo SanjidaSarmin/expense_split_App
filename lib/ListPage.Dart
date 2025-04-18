@@ -2,6 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:expense_splitter/Group.dart';
 
 class CreateListPage extends StatefulWidget {
+  final String groupName;
+  final String currency;
+
+     const CreateListPage({
+    Key? key,
+    this.groupName = 'My Group',
+    this.currency = 'USD',
+  }) : super(key: key);
   @override
   _CreateListPageState createState() => _CreateListPageState();
 }
@@ -97,27 +105,28 @@ class _CreateListPageState extends State<CreateListPage> {
               ),
             ),
             Spacer(),
-            ElevatedButton(
-  onPressed: () {
-    if (_listNameController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Please enter a list name'),
-          backgroundColor: Colors.red,
-        ),
-      );
-    } else {
-      // Pass the group name to CreateListMembersPage
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => CreateListMembersPage(
-            groupName: _listNameController.text.trim(),
-          ),
-        ),
-      );
-    }
-  },
+           ElevatedButton(
+              onPressed: () {
+                if (_listNameController.text.trim().isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Please enter a list name'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                } else {
+                  // ✅ Pass group name and currency
+                   Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CreateListMembersPage(
+                        groupName: _listNameController.text.trim(),
+                        currency: _selectedCurrency,
+                      ),
+                    ),
+                  );
+                }
+              },
   style: ElevatedButton.styleFrom(
     backgroundColor: Colors.blue,
     minimumSize: Size(double.infinity, 50),
