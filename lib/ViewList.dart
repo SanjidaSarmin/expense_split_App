@@ -1,4 +1,5 @@
 import 'package:expense_splitter/Friend.dart';
+import 'package:expense_splitter/GroupInfo.dart';
 import 'package:expense_splitter/HomePage.dart';
 import 'package:expense_splitter/Profile.dart';
 import 'package:expense_splitter/service/GroupService.dart';
@@ -94,60 +95,62 @@ class _ListScreenState extends State<ListScreen> {
 
   // Show delete confirmation dialog
   void _showDeleteDialog(int groupId) {
-  showDialog(
-    context: context,
-    builder: (ctx) => AlertDialog(
-      title: const Text('Delete List'),
-      content: const Text('Are you sure you want to delete this list?'),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(ctx).pop(),
-          child: const Text('Cancel'),
-        ),
-        TextButton(
-          onPressed: () async {
-            Navigator.of(ctx).pop(); // Close dialog first
-            bool deleted = await _groupService.deleteGroup(groupId);
-            if (deleted) {
-              setState(() {
-                _groups.removeWhere((group) => group['id'] == groupId);
-              });
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Group deleted')),
-              );
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Failed to delete group')),
-              );
-            }
-          },
-          child: const Text(
-            'Delete',
-            style: TextStyle(color: Colors.red),
+    showDialog(
+      context: context,
+      builder:
+          (ctx) => AlertDialog(
+            title: const Text('Delete List'),
+            content: const Text('Are you sure you want to delete this list?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () async {
+                  Navigator.of(ctx).pop(); // Close dialog first
+                  bool deleted = await _groupService.deleteGroup(groupId);
+                  if (deleted) {
+                    setState(() {
+                      _groups.removeWhere((group) => group['id'] == groupId);
+                    });
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text('Group deleted')));
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Failed to delete group')),
+                    );
+                  }
+                },
+                child: const Text(
+                  'Delete',
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
+            ],
           ),
-        ),
-      ],
-    ),
-  );
-}
-
-
-  void _deleteGroup(int groupId) async {
-  bool success = await _groupService.deleteGroup(groupId);
-
-  if (success) {
-    setState(() {
-      _groups.removeWhere((group) => group['id'] == groupId); // Use correct key
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Group deleted')),
-    );
-  } else {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Failed to delete group')),
     );
   }
-}
+
+  void _deleteGroup(int groupId) async {
+    bool success = await _groupService.deleteGroup(groupId);
+
+    if (success) {
+      setState(() {
+        _groups.removeWhere(
+          (group) => group['id'] == groupId,
+        ); // Use correct key
+      });
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Group deleted')));
+    } else {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to delete group')));
+    }
+  }
 
   // List<Map<String, String>> lists = [
   //   {'name': 'Dghv', 'balance': '\$0.00'},
@@ -209,8 +212,18 @@ class _ListScreenState extends State<ListScreen> {
                         child: ListTileCard(
                           name: group['name'] ?? 'No Name',
                           balance: group['currency'] ?? 'No Balance',
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Groupinfo(group: group),
+                              ),
+                            );
+                          },
                           onLongPress: () {
-                            _showDeleteDialog(index);
+                            _showDeleteDialog(
+                              group['id'],
+                            ); // Make sure to use group ID
                           },
                         ),
                       );
@@ -280,18 +293,21 @@ class ListTileCard extends StatelessWidget {
   final String name;
   final String balance;
   final VoidCallback onLongPress;
+  final VoidCallback onTap;
 
   const ListTileCard({
     super.key,
     required this.name,
     required this.balance,
     required this.onLongPress,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onLongPress: onLongPress,
+      onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
           color: const Color(0xFF2A2F4F),
@@ -379,6 +395,14 @@ class GroupSearchDelegate extends SearchDelegate {
           child: ListTileCard(
             name: group['name'] ?? 'No Name',
             balance: group['currency'] ?? 'No Balance',
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Groupinfo(group: group),
+                ),
+              );
+            },
             onLongPress: () {
               onDelete(index); // Call the passed delete function
             },
