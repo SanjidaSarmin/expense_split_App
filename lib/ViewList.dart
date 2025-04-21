@@ -32,6 +32,7 @@ class ListScreen extends StatefulWidget {
 
 class _ListScreenState extends State<ListScreen> {
   final GroupService _groupService = GroupService();
+
   List<Map<String, dynamic>> _groups = [];
 
   int _selectedIndex = 0;
@@ -84,9 +85,10 @@ class _ListScreenState extends State<ListScreen> {
 
   Future<void> _fetchGroups() async {
     try {
-      List<Map<String, dynamic>> groups = await _groupService.fetchGroups();
+      final fetchedGroups = await _groupService.fetchGroups();
       setState(() {
-        _groups = groups;
+        _groups = fetchedGroups;
+        print(_groups);
       });
     } catch (e) {
       print('Error fetching groups: $e');
@@ -152,11 +154,6 @@ class _ListScreenState extends State<ListScreen> {
     }
   }
 
-  // List<Map<String, String>> lists = [
-  //   {'name': 'Dghv', 'balance': '\$0.00'},
-  //   {'name': 'Abc', 'balance': 'BDT 0.00'},
-  // ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -206,17 +203,32 @@ class _ListScreenState extends State<ListScreen> {
                     ..._groups.asMap().entries.map((entry) {
                       final index = entry.key;
                       final group = entry.value;
+                      final groupId = group['id'];
 
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 12),
                         child: ListTileCard(
                           name: group['name'] ?? 'No Name',
                           balance: group['currency'] ?? 'No Balance',
+                          subtitle:
+                              group['members'] is List
+                                  ? (group['members'] as List)
+                                      .map((m) => m['name'])
+                                      .join(', ')
+                                  : '${group['members']} member(s)', // If no members, show 'No Members'
+
                           onTap: () {
+                           print("------ ${group['id']}");
+                            print("------ ${group['name']}");
+                            print("MEMBERS TYPE: ${group['members'].runtimeType}");
+                            print("MEMBERS VALUE: ${group['members']}");
+
+                            
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => Groupinfo(group: group),
+                                builder:
+                                    (context) => GroupDetailsPage(groupId: groupId.toString()),
                               ),
                             );
                           },
@@ -292,6 +304,7 @@ class _ListScreenState extends State<ListScreen> {
 class ListTileCard extends StatelessWidget {
   final String name;
   final String balance;
+  final String subtitle;
   final VoidCallback onLongPress;
   final VoidCallback onTap;
 
@@ -299,6 +312,7 @@ class ListTileCard extends StatelessWidget {
     super.key,
     required this.name,
     required this.balance,
+    required this.subtitle,
     required this.onLongPress,
     required this.onTap,
   });
@@ -338,6 +352,10 @@ class ListTileCard extends StatelessWidget {
                 Text(
                   "My balance: $balance",
                   style: const TextStyle(fontSize: 14, color: Colors.white70),
+                ),
+                Text(
+                  "Member: $subtitle",
+                  style: const TextStyle(fontSize: 12, color: Colors.white60),
                 ),
               ],
             ),
@@ -390,16 +408,26 @@ class GroupSearchDelegate extends SearchDelegate {
       itemCount: results.length,
       itemBuilder: (context, index) {
         final group = results[index];
+        final groupId = group['id'];
+
         return Padding(
           padding: const EdgeInsets.all(8.0),
           child: ListTileCard(
             name: group['name'] ?? 'No Name',
             balance: group['currency'] ?? 'No Balance',
+            subtitle:
+                group['members'] is List
+                    ? (group['members'] as List)
+                        .map((m) => m['name'])
+                        .join(', ')
+                    : '${group['members']} member(s)',
+
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => Groupinfo(group: group),
+                  builder:
+                      (context) => GroupDetailsPage(groupId: groupId.toString()),
                 ),
               );
             },

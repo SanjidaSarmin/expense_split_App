@@ -1,0 +1,40 @@
+class Group {
+  final int id;
+  final String name;
+  final String currency;
+  final List<Member> members;
+
+  Group({
+    required this.id,
+    required this.name,
+    required this.currency,
+    required this.members,
+  });
+
+  factory Group.fromJson(Map<String, dynamic> json) {
+    var membersJson = json['members'] as List;
+    List<Member> membersList =
+        membersJson.map((i) => Member.fromJson(i)).toList();
+
+    return Group(
+      id: json['id'],
+      name: json['name'],
+      currency: json['currency'],
+      members: membersList,
+    );
+  }
+}
+
+class Member {
+  final int id;
+  final String name;
+
+  Member({required this.id, required this.name});
+
+  factory Member.fromJson(Map<String, dynamic> json) {
+    return Member(
+      id: json['id'],
+      name: json['name'],
+    );
+  }
+}

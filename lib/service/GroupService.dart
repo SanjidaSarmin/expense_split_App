@@ -70,6 +70,32 @@ class GroupService {
     }
   }
 
+  Future<Map<String, dynamic>> fetchGroupDetails(String groupId) async {
+  final url = Uri.parse('http://192.168.0.106:8082/api/groups/$groupId'); // Pass the groupId in the URL
+  try {
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+
+      // Returning a map with group details
+      return {
+        'id': data['id'],
+        'name': data['name'],
+        'currency': data['currency'],
+        'members': data['members'] ?? [], // Use an empty list if members are null
+      };
+    } else {
+      print('❌ Failed to fetch group: ${response.statusCode}');
+      return {}; // Return an empty map if the request fails
+    }
+  } catch (e) {
+    print('❌ Error fetching group details: $e');
+    return {}; // Return an empty map on error
+  }
+}
+
+
 Future<bool> deleteGroup(int groupId) async {
     final url = Uri.parse('http://192.168.0.106:8082/api/groups/$groupId');
 
